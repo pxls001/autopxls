@@ -50,6 +50,7 @@
 		var y = +config.y;
 
 		var m = +config.mode || 0;
+		var w, h;
 
 		var canvas = document.createElement('canvas');
 		var image;
@@ -110,8 +111,6 @@
 		}
 
 		function tryToDraw() {
-			var w = canvas.width;
-			var h = canvas.height;
 			var random_pixels = [];
 			board_pixels = board.getImageData(x, y, w, h).data;
 			
@@ -155,8 +154,8 @@
 		}
 
 		function drawPixel(i) {
-			var _x = i/4%canvas.width;
-			var _y = i/4/canvas.width|0;
+			var _x = i/4%w;
+			var _y = i/4/w|0;
 
 			var color_id = getColorId(i);
 			if(color_id < 0) {
@@ -183,8 +182,8 @@
 		}
 
 		img.onload = function(){
-			canvas.width = img.width;
-			canvas.height = img.height;
+			w = canvas.width = img.width;
+			h = canvas.height = img.height;
 			image = canvas.getContext('2d');
 			image.drawImage(img, 0, 0, img.width, img.height);
 			image_pixels = image.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -234,11 +233,13 @@
 	}
 
 	draw();
-})([{
-	title: "title",
-	x: 1415,
-	y: 666,
-	image: "http://i.imgur.com/image.png",
-	mode: 0, // 0 - построчно сверху, 1 - снизу, 2 - слева, 3 - справа, 4 - рандом,
-	// 5 - рандомная смена режимов на лету
-}]);
+})([
+	{
+		title: "title",
+		x: 1415,
+		y: 666,
+		image: "http://i.imgur.com/image.png",
+		mode: 0, // 0 - построчно сверху, 1 - снизу, 2 - слева, 3 - справа, 4 - рандом,
+		// 5 - рандомная смена режимов на лету
+	}
+]);
