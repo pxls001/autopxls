@@ -1,15 +1,5 @@
-(function() {
-	var images = [
-		{
-			title: "title",
-			x: 1415,
-			y: 666,
-			image: "http://i.imgur.com/image.png",
-			mode: 0, // 0 - построчно сверху, 1 - снизу, 2 - слева, 3 - справа, 4 - рандом,
-			// 5 - рандомная смена режимов на лету
-		}
-	];
-
+(function(images) {
+	
 	function shuffle(array) {
 		var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -244,4 +234,11 @@
 	}
 
 	draw();
-})();
+})([{
+	title: "title",
+	x: 1415,
+	y: 666,
+	image: "http://i.imgur.com/image.png",
+	mode: 0, // 0 - построчно сверху, 1 - снизу, 2 - слева, 3 - справа, 4 - рандом,
+	// 5 - рандомная смена режимов на лету
+}]);
