@@ -146,17 +146,14 @@
 				if(!isSamePixelColor(j)) {
 					if (m == 4)
 						random_pixels.push(j);
-					else {
-						drawPixel(j);
-						return 25;
-					}
+					else
+						return drawPixel(j);
 				}	
 			}
 
 			if (random_pixels.length > 0) {
 				var i = random_pixels[Math.random()*random_pixels.length|0];
-				drawPixel(i);
-				return 25;
+				return drawPixel(i);
 			}
 
 			console.log(title + " охуенен");
@@ -164,20 +161,20 @@
 		}
 
 		function drawPixel(i) {
+			var _x = i/4%canvas.width;
+			var _y = i/4/canvas.width|0;
 
-				var _x = i/4%w;
-				var _y = i/4/w|0;
+			var color_id = getColorId(i);
+			if(color_id < 0) {
+				console.log("пиксель x:" + _x + " y: " + _y + " хуевый");
+				return -1;
+			}
 
-				var color_id = getColorId(i);
-				if(color_id < 0) {
-					console.log("пиксель x:" + _x + " y: " + _y + " хуевый");
-					return -1;
-				}
+			App.switchColor(color_id);
+			App.attemptPlace(x + _x, y + _y);
 
-				App.switchColor(color_id);
-				App.attemptPlace(x + _x, y + _y);
-
-				console.log("рисую " + title + " пиксель " + " x:" + (x + _x) + " y:" + (y + _y));
+			console.log("рисую " + title + " пиксель " + " x:" + (x + _x) + " y:" + (y + _y));
+			return 25;
 		}
 
 		function drawImage() {
