@@ -1,7 +1,15 @@
 // Пикселирует построчно.
 // Проведена оптимизация кода.
 
-function AutoPXLS(images) {
+(function() {
+	var images = [
+		{
+			title: "title",
+			x: 1415,
+			y: 666,
+			image: "http://i.imgur.com/image.png"
+		}
+	];
 
 	function shuffle(array) {
 		var currentIndex = array.length, temporaryValue, randomIndex;
@@ -200,14 +208,4 @@ function AutoPXLS(images) {
 	}
 
 	draw();
-}
-
-var images = [
-	{
-		title: "title",
-		x: 1415,
-		y: 666,
-		image: "http://i.imgur.com/image.png"
-	}
-];
-AutoPXLS(images);
+})();
