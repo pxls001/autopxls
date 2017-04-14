@@ -125,9 +125,9 @@
 			for(var i = 0, len = board_pixels.length; i < len; i += 4) {
 				
 				var j = i; // cверху вниз
-				//var j = len-4-i; // cнизу вверх
+				//var j = len-4-i; // cнизу вверх или справа налево
 				//var j = (i/4%h*w+(i/4/h|0))*4; // слева направо
-				//j = (j/4%h*w+(i/4/h|0))*4; // справа налево
+				//j = (j/4%h*w+(j/4/h|0))*4; // справа налево
 
 				if(!isSamePixelColor(j)) {
 					var _x = j/4%w;
