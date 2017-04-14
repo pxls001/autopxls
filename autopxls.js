@@ -5,7 +5,7 @@
 			x: 1415,
 			y: 666,
 			image: "http://i.imgur.com/image.png",
-			mode: 0, // 0 - построчно сверху, 1 - снизу, 2 - слева, 3 - справа
+			mode: 0, // 0 - построчно сверху, 1 - снизу, 2 - слева, 3 - справа, 4 - рандом
 		}
 	];
 
@@ -58,7 +58,7 @@
 		var x = +config.x;
 		var y = +config.y;
 
-		var m = +config.mode;
+		var m = +config.mode || 0;
 
 		var canvas = document.createElement('canvas');
 		var image;
@@ -121,18 +121,20 @@
 		function tryToDraw() {
 			var w = canvas.width;
 			var h = canvas.height;
+			var random_pixels = [];
 			board_pixels = board.getImageData(x, y, w, h).data;
+
 			for(var i = 0, len = board_pixels.length; i < len; i += 4) {
 				
-				var j;
+				var j = i;
 				switch(m) {
 					case 0: // cверху вниз
-						j = i;
+						//j = i;
 						break;
 					case 1: // cнизу вверх
 						j = len-4-i;
-						break; // слева направо
-					case 2:
+						break;
+					case 2: // слева направо
 						j = (i/4%h*w+(i/4/h|0))*4;
 						break;
 					case 3: // справа налево
@@ -142,26 +144,40 @@
 				}
 
 				if(!isSamePixelColor(j)) {
-					var _x = j/4%w;
-					var _y = j/4/w|0;
-
-					var color_id = getColorId(j);
-					if(color_id < 0) {
-						console.log("пиксель x:" + _x + " y: " + _y + " хуевый");
-						continue;
+					if (m == 4)
+						random_pixels.push(j);
+					else {
+						drawPixel(j);
+						return 25;
 					}
-
-					App.switchColor(color_id);
-					App.attemptPlace(x + _x, y + _y);
-
-					console.log("рисую " + title + " пиксель " + " x:" + (x + _x) + " y:" + (y + _y));
-					
-					return 25;
-				}
-				
+				}	
 			}
+
+			if (random_pixels.length > 0) {
+				var i = random_pixels[Math.random()*random_pixels.length|0];
+				drawPixel(i);
+				return 25;
+			}
+
 			console.log(title + " охуенен");
 			return -1;
+		}
+
+		function drawPixel(i) {
+
+				var _x = i/4%w;
+				var _y = i/4/w|0;
+
+				var color_id = getColorId(i);
+				if(color_id < 0) {
+					console.log("пиксель x:" + _x + " y: " + _y + " хуевый");
+					return -1;
+				}
+
+				App.switchColor(color_id);
+				App.attemptPlace(x + _x, y + _y);
+
+				console.log("рисую " + title + " пиксель " + " x:" + (x + _x) + " y:" + (y + _y));
 		}
 
 		function drawImage() {
