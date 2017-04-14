@@ -5,7 +5,8 @@
 			x: 1415,
 			y: 666,
 			image: "http://i.imgur.com/image.png",
-			mode: 0, // 0 - построчно сверху, 1 - снизу, 2 - слева, 3 - справа, 4 - рандом
+			mode: 0, // 0 - построчно сверху, 1 - снизу, 2 - слева, 3 - справа, 4 - рандом,
+			// 5 - рандомная смена режимов на лету
 		}
 	];
 
@@ -123,6 +124,9 @@
 			var h = canvas.height;
 			var random_pixels = [];
 			board_pixels = board.getImageData(x, y, w, h).data;
+			
+			if(+config.mode == 5) // смена режимов
+				m = 5*Math.random()|0;
 
 			for(var i = 0, len = board_pixels.length; i < len; i += 4) {
 				
