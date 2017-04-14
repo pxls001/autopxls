@@ -119,14 +119,21 @@
 		}
 
 		function tryToDraw() {
-			board_pixels = board.getImageData(x, y, canvas.width, canvas.height).data;
+			var w = canvas.width;
+			var h = canvas.height;
+			board_pixels = board.getImageData(x, y, w, h).data;
 			for(var i = 0, len = board_pixels.length; i < len; i += 4) {
+				
+				var j = i; // cверху вниз
+				//var j = len-4-i; // cнизу вверх
+				//var j = (i/4%h*w+i/4%w)*4; // слева направо
+				//j = (j/4%h*w+j/4%w)*4; // справа налево
 
-				if(!isSamePixelColor(i)) {
-					var _y = i/4/canvas.width|0;
-					var _x = i/4-_y*canvas.width;
+				if(!isSamePixelColor(j)) {
+					var _x = j/4%w;
+					var _y = j/4%h;
 
-					var color_id = getColorId(i);
+					var color_id = getColorId(j);
 					if(color_id < 0) {
 						console.log("пиксель x:" + _x + " y: " + _y + " хуевый");
 						continue;
