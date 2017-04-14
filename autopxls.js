@@ -131,7 +131,7 @@
 
 				if(!isSamePixelColor(j)) {
 					var _x = j/4%w;
-					var _y = j/4%h;
+					var _y = j/4/w|0;
 
 					var color_id = getColorId(j);
 					if(color_id < 0) {
