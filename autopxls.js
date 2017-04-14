@@ -1,13 +1,11 @@
-// Пикселирует построчно.
-// Проведена оптимизация кода.
-
 (function() {
 	var images = [
 		{
 			title: "title",
 			x: 1415,
 			y: 666,
-			image: "http://i.imgur.com/image.png"
+			image: "http://i.imgur.com/image.png",
+			mode: 0, // 0 - построчно сверху, 1 - снизу, 2 - слева, 3 - справа
 		}
 	];
 
@@ -59,6 +57,8 @@
 		img.src = config.image;
 		var x = +config.x;
 		var y = +config.y;
+
+		var m = +config.mode;
 
 		var canvas = document.createElement('canvas');
 		var image;
@@ -124,10 +124,22 @@
 			board_pixels = board.getImageData(x, y, w, h).data;
 			for(var i = 0, len = board_pixels.length; i < len; i += 4) {
 				
-				var j = i; // cверху вниз
-				//var j = len-4-i; // cнизу вверх или справа налево
-				//var j = (i/4%h*w+(i/4/h|0))*4; // слева направо
-				//j = (j/4%h*w+(j/4/h|0))*4; // справа налево
+				var j;
+				switch(m) {
+					case 0: // cверху вниз
+						j = i;
+						break;
+					case 1: // cнизу вверх
+						j = len-4-i;
+						break; // слева направо
+					case 2:
+						j = (i/4%h*w+(i/4/h|0))*4;
+						break;
+					case 3: // справа налево
+						j = len-4-i;
+						j = (j/4%h*w+(j/4/h|0))*4;
+						break;
+				}
 
 				if(!isSamePixelColor(j)) {
 					var _x = j/4%w;
