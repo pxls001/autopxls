@@ -58,6 +58,7 @@
 		var board_pixels;
 
 		var image_loaded_flag = false;
+		var image_correct_flag = true;
 
 
 		function isSamePixelColor(coords) {
@@ -149,13 +150,18 @@
 				return drawPixel(i);
 			}
 
-			console.log(title + " охуенен");
+			if (!image_correct_flag) {
+				image_correct_flag = true;
+				console.log(title + " охуенен");
+			}
 			return -1;
 		}
 
 		function drawPixel(i) {
 			var _x = i/4%w;
 			var _y = i/4/w|0;
+			
+			image_correct_flag = false;
 
 			var color_id = getColorId(i);
 			if(color_id < 0) {
