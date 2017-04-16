@@ -18,6 +18,7 @@
 
 	images = shuffle(images);
   
+	/* кто-то пользуется этим?
 	if (Notification.permission !== "granted")
 		Notification.requestPermission();
 
@@ -38,9 +39,10 @@
 
 		om(message);
 	}
+	*/
 
 	var Painter = function(config) {
-		var board = document.getElementById("board").getContext('2d');
+		var board = App.elements.board[0].getContext('2d');
 		var title = config.title || "unnamed";
 
 		var img = new Image();
@@ -59,15 +61,55 @@
 
 		var image_loaded_flag = false;
 		var image_correct_flag = true;
+		var contour_flag = false;
 
 
 		function isSamePixelColor(coords) {
-			if(image_pixels[coords+3] <= 127)
+			if(image_pixels[coords+3] < 127)
 				return true;
 
 			for(var i = 0; i < 3; i++) {
-				if(board_pixels[coords+i] != image_pixels[coords+i])
-					return false;
+				if(board_pixels[coords+i] != image_pixels[coords+i]) {
+					if (m == 6) { // поиск контура
+						if (
+							coords/4%w%(w-1) == 0 || // возле границ картинки
+							(coords/4/w|0)%(h-1) == 0 ||
+							image_pixels[coords+3+4] < 127 || // возле прозрачных пикселей
+							image_pixels[coords+3-4] < 127 ||
+							image_pixels[coords+3+4*w] < 127 ||
+							image_pixels[coords+3-4*w] < 127
+							)
+						{
+							if (contour_flag)
+								contour_flag = false; // приоритет - контур
+
+							return false;
+						}
+						else if (contour_flag) {
+							var flag = true;
+							for(var j = 0; j < 3; j++) {
+								if ( // дальнейший поиск пикселей возле контура
+									board_pixels[coords+j+4] != image_pixels[coords+j+4] &&
+									board_pixels[coords+j-4] != image_pixels[coords+j-4] &&
+									board_pixels[coords+j+4*w] != image_pixels[coords+j+4*w] &&
+									board_pixels[coords+j-4*w] != image_pixels[coords+j-4*w]
+									)
+								{
+									flag = false;
+									break;
+								}
+							}
+							if (flag)
+								return false;
+
+							break;
+						}
+						else
+							break;
+					}
+					else
+						return false;
+				}
 			}
 			return true;
 		}
@@ -138,7 +180,7 @@
 				}
 
 				if(!isSamePixelColor(j)) {
-					if (m == 4)
+					if (m == 4 || m == 6)
 						random_pixels.push(j);
 					else
 						return drawPixel(j);
@@ -148,6 +190,12 @@
 			if (random_pixels.length > 0) {
 				var i = random_pixels[Math.random()*random_pixels.length|0];
 				return drawPixel(i);
+			}
+
+			if (m == 6 && random_pixels.length == 0 && !contour_flag) {
+				contour_flag = true;
+				console.log(title + " контур охуенен");
+				return tryToDraw();
 			}
 
 			if (!image_correct_flag) {
@@ -187,7 +235,7 @@
 			return image_loaded_flag;
 		}
 
-		img.onload = function(){
+		img.onload = function() {
 			w = canvas.width = img.width;
 			h = canvas.height = img.height;
 			image = canvas.getContext('2d');
@@ -195,28 +243,22 @@
 			image_pixels = image.getImageData(0, 0, canvas.width, canvas.height).data;
 
 			image_loaded_flag = true;
-		};
-
-
+		}
 
 		return {
 			drawImage: drawImage,
-			isReady: isReady
+			isReady: isReady,
 		}
 	}
 
-
 	var painters = [];
-	for(var i = 0; i < images.length; i++) {
+	for(var i = 0; i < images.length; i++)
 		painters[i] = Painter(images[i]);
-	}
 
 	function draw() {
 		var timer = (App.cooldown-(new Date).getTime())/1000;
-		if(0 < timer) {
-			//console.log("timer: " + timer);
+		if(0 < timer)
 			setTimeout(draw, 1000);
-		}
 		else {
 			for(var i = 0; i < painters.length; i++) {
 				if(painters[i].isReady()) {
@@ -234,18 +276,18 @@
 			}
 			setTimeout(draw, 15000);
 		}
-
 		return;
 	}
 
-	draw();
+draw();
+
 })([
 	{
 		title: "title",
-		x: 1415,
-		y: 666,
-		image: "http://i.imgur.com/image.png",
+		x: 0,
+		y: 0,
+		image: "https://i.imgur.com/image.png",
 		mode: 0, // 0 - построчно сверху, 1 - снизу, 2 - слева, 3 - справа, 4 - рандом,
-		// 5 - рандомная смена режимов на лету
+		// 5 - рандомная смена режимов 0-4 на лету, 6 - рандомом от контура
 	}
 ]);
