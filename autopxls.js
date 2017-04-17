@@ -1,46 +1,5 @@
 (function(images) {
 	
-	function shuffle(array) {
-		var currentIndex = array.length, temporaryValue, randomIndex;
-
-		while (0 !== currentIndex) {
-
-			randomIndex = Math.floor(Math.random() * currentIndex);
-			currentIndex -= 1;
-
-			temporaryValue = array[currentIndex];
-			array[currentIndex] = array[randomIndex];
-			array[randomIndex] = temporaryValue;
-		}
-
-		return array;
-	}
-
-	images = shuffle(images);
-  
-	/* кто-то пользуется этим?
-	if (Notification.permission !== "granted")
-		Notification.requestPermission();
-
-	var om = App.socket.onmessage;
-
-	App.socket.onmessage = function(message) {
-		var m = JSON.parse(message.data);
-
-		if(m.type == "captcha_required") {
-			if (Notification.permission !== "granted")
-				Notification.requestPermission();
-			else {
-				var notification = new Notification('Капчуй-капчуй', {
-					body: "Введи капчу, уеба.",
-				});
-			}
-		}
-
-		om(message);
-	}
-	*/
-
 	var Painter = function(config) {
 		var board = App.elements.board[0].getContext('2d');
 		var title = config.title || "unnamed";
@@ -218,7 +177,7 @@
 			}
 
 			App.switchColor(color_id);
-			App.attemptPlace(x + _x, y + _y);
+			App.doPlace(x + _x, y + _y);
 
 			console.log("рисую " + title + " пиксель " + " x:" + (x + _x) + " y:" + (y + _y));
 			return 25;
@@ -279,7 +238,7 @@
 		return;
 	}
 
-draw();
+	draw();
 
 })([
 	{
