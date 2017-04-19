@@ -1,7 +1,7 @@
 (function(images) {
 	
 	var Painter = function(config) {
-		var board = App.elements.board[0].getContext('2d');
+		var board = document.getElementById("board").getContext('2d');
 		var title = config.title || "unnamed";
 
 		var img = new Image();
@@ -153,7 +153,7 @@
 
 			if (m == 6 && random_pixels.length == 0 && !contour_flag) {
 				contour_flag = true;
-				console.log(title + " контур охуенен");
+				//console.log(title + " контур охуенен");
 				return tryToDraw();
 			}
 
@@ -177,10 +177,10 @@
 			}
 
 			App.switchColor(color_id);
-			App.doPlace(x + _x, y + _y);
+			App.attemptPlace(x + _x, y + _y);
 
 			console.log("рисую " + title + " пиксель " + " x:" + (x + _x) + " y:" + (y + _y));
-			return 25;
+			return 1;
 		}
 
 		function drawImage() {
