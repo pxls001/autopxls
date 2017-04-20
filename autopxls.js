@@ -215,16 +215,13 @@
 		painters[i] = Painter(images[i]);
 
 	function draw() {
-		var timer = (App.cooldown-(new Date).getTime())/1000;
-		if(0 < timer)
-			setTimeout(draw, 1000);
+		if(0 < (App.cooldown-Date.now())/1000)
+			setTimeout(draw, 100);
 		else {
 			for(var i = 0; i < painters.length; i++) {
 				if(painters[i].isReady()) {
-					var result = painters[i].drawImage();
-
-					if(result > 0) {
-						setTimeout(draw, result*1000);
+					if(painters[i].drawImage() > 0) {
+						setTimeout(draw, 1000);
 						return;
 					}
 					else
