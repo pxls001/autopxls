@@ -1,4 +1,10 @@
 (function(images) {
+	var timer_1 = 1000;
+	var timer_2 = 25000;
+	if (window.location.hostname == 'pxls.pety.pl') {
+		timer_1 = 100;
+		timer_2 = 1000;
+	}
 	
 	var Painter = function(config) {
 		var board = document.getElementById("board").getContext('2d');
@@ -215,13 +221,13 @@
 		painters[i] = Painter(images[i]);
 
 	function draw() {
-		if(0 < (App.cooldown-Date.now())/1000)
-			setTimeout(draw, 100);
+		if(0 < App.cooldown-Date.now())
+			setTimeout(draw, timer_1);
 		else {
 			for(var i = 0; i < painters.length; i++) {
 				if(painters[i].isReady()) {
 					if(painters[i].drawImage() > 0) {
-						setTimeout(draw, 1000);
+						setTimeout(draw, timer_2);
 						return;
 					}
 					else
