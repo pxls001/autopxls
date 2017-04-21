@@ -30,11 +30,11 @@
 
 
 		function isSamePixelColor(coords) {
-			if(image_pixels[coords+3] < 127)
+			if (image_pixels[coords+3] < 127)
 				return true;
 
-			for(var i = 0; i < 3; i++) {
-				if(board_pixels[coords+i] != image_pixels[coords+i]) {
+			for (var i = 0; i < 3; i++) {
+				if (board_pixels[coords+i] != image_pixels[coords+i]) {
 					if (m == 6) { // поиск контура
 						if (
 							coords/4%w%(w-1) == 0 || // возле границ картинки
@@ -52,7 +52,7 @@
 						}
 						else if (contour_flag) {
 							var flag = true;
-							for(var j = 0; j < 3; j++) {
+							for (var j = 0; j < 3; j++) {
 								if ( // дальнейший поиск пикселей возле контура
 									board_pixels[coords+j+4] != image_pixels[coords+j+4] &&
 									board_pixels[coords+j-4] != image_pixels[coords+j-4] &&
@@ -101,15 +101,15 @@
 
 			var color_id = -1;
 			var flag = false;
-			for(var i = 0, len = colors.length; i < len; i++) {
+			for (var i = 0, len = colors.length; i < len; i++) {
 				flag = true;
-				for(var j = 0; j < 3; j++) {
-					if(image_pixels[coords+j] != colors[i][j]) {
+				for (var j = 0; j < 3; j++) {
+					if (image_pixels[coords+j] != colors[i][j]) {
 						flag = false;
 						break;
 					}
 				}
-				if(flag) {
+				if (flag) {
 					color_id = i;
 					break;
 				}
@@ -122,13 +122,13 @@
 			var random_pixels = [];
 			board_pixels = board.getImageData(x, y, w, h).data;
 			
-			if(+config.mode == 5) // смена режимов
+			if (+config.mode == 5) // смена режимов
 				m = 5*Math.random()|0;
 
-			for(var i = 0, len = board_pixels.length; i < len; i += 4) {
+			for (var i = 0, len = board_pixels.length; i < len; i += 4) {
 				
 				var j = i;
-				switch(m) {
+				switch (m) {
 					case 0: // cверху вниз
 						//j = i;
 						break;
@@ -144,7 +144,7 @@
 						break;
 				}
 
-				if(!isSamePixelColor(j)) {
+				if (!isSamePixelColor(j)) {
 					if (m == 4 || m == 6)
 						random_pixels.push(j);
 					else
@@ -177,7 +177,7 @@
 			image_correct_flag = false;
 
 			var color_id = getColorId(i);
-			if(color_id < 0) {
+			if (color_id < 0) {
 				console.log("пиксель x:" + _x + " y: " + _y + " хуевый");
 				return -1;
 			}
@@ -217,16 +217,16 @@
 	}
 
 	var painters = [];
-	for(var i = 0; i < images.length; i++)
+	for (var i = 0; i < images.length; i++)
 		painters[i] = Painter(images[i]);
 
 	function draw() {
-		if(0 < App.cooldown-Date.now())
+		if (0 < App.cooldown-Date.now())
 			setTimeout(draw, timer_1);
 		else {
-			for(var i = 0; i < painters.length; i++) {
-				if(painters[i].isReady()) {
-					if(painters[i].drawImage() > 0) {
+			for (var i = 0; i < painters.length; i++) {
+				if (painters[i].isReady()) {
+					if (painters[i].drawImage() > 0) {
 						setTimeout(draw, timer_2);
 						return;
 					}
@@ -251,5 +251,5 @@
 		image: "https://i.imgur.com/image.png",
 		mode: 0, // 0 - построчно сверху, 1 - снизу, 2 - слева, 3 - справа, 4 - рандом,
 		// 5 - рандомная смена режимов 0-4 на лету, 6 - рандомом от контура
-	}
+	},
 ]);
