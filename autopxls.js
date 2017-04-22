@@ -5,6 +5,10 @@
 		timer_1 = 100;
 		timer_2 = 1000;
 	}
+	else if (window.location.hostname == 'wepixels.pw') {
+		timer_1 = 100;
+		timer_2 = 20000;
+	}
 	
 	var Painter = function(config) {
 		var board = document.getElementById("board").getContext('2d');
