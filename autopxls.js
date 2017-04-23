@@ -10,6 +10,30 @@
 		timer_2 = 20000;
 	}
 	
+	if (Notification.permission !== "granted")
+		Notification.requestPermission();
+
+	var pause = false;
+	var om = App.socket.onmessage;
+	App.socket.onmessage = function(message) {
+		var m = JSON.parse(message.data);
+		if (m.type == "captcha_required") {
+			pause = true;
+			console.log("капча вылезла");
+			if (Notification.permission !== "granted")
+				Notification.requestPermission();
+			else {
+				var notification = new Notification('Капчуй-капчуй', {
+					body: "Введи капчу, уеба.",
+				});
+			}
+		}
+		else if (m.type == 'captcha_status')
+			pause = false;
+
+		om(message);
+	}
+	
 	var Painter = function(config) {
 		var board = document.getElementById("board").getContext('2d');
 		var title = config.title || "unnamed";
@@ -225,7 +249,7 @@
 		painters[i] = Painter(images[i]);
 
 	function draw() {
-		if (0 < App.cooldown-Date.now())
+		if (0 < App.cooldown-Date.now() || pause)
 			setTimeout(draw, timer_1);
 		else {
 			for (var i = 0; i < painters.length; i++) {
