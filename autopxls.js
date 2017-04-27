@@ -1,35 +1,54 @@
 (function(images) {
-	var timer_1 = 1000;
-	var timer_2 = 25000;
-	if (window.location.hostname == 'pxls.pety.pl') {
-		timer_1 = 100;
-		timer_2 = 1000;
+	var timer = 1000;
+	var cooldown = 25000;
+	var def = 1000;
+	var pause = false;
+
+	switch (window.location.hostname) {
+		case 'pxls.pety.pl':
+			timer = 100;
+			cooldown = 1000;
+			break;
+		case 'wepixels.pw':
+			timer = 100;
+			cooldown = 20000;
+			break;
 	}
-	else if (window.location.hostname == 'wepixels.pw') {
-		timer_1 = 100;
-		timer_2 = 20000;
-	}
-	
+
 	if (Notification.permission !== "granted")
 		Notification.requestPermission();
 
-	var pause = false;
 	var om = App.socket.onmessage;
 	App.socket.onmessage = function(message) {
 		var m = JSON.parse(message.data);
-		if (m.type == "captcha_required") {
-			pause = true;
-			console.log("капча вылезла");
-			if (Notification.permission !== "granted")
-				Notification.requestPermission();
-			else {
-				var notification = new Notification('Капчуй-капчуй', {
-					body: "Введи капчу, уеба.",
-				});
-			}
+		switch (m.type) {
+			case 'captcha_required':
+				pause = true;
+				console.log("капча вылезла");
+				if (Notification.permission !== "granted")
+					Notification.requestPermission();
+				else {
+					var notification = new Notification('Капчуй-капчуй', {
+						body: "Введи капчу, уеба.",
+					});
+				}
+				break;
+			case 'captcha_status':
+				pause = false;
+				break;
+			case 'cooldown':
+				if (m.wait > 0) {
+					if (m.wait > 25) {
+						timer = 1000;
+						cooldown = 25000;
+					}
+					else {
+						timer = 100;
+						cooldown = m.wait*1000;
+					}
+				}
+				break;
 		}
-		else if (m.type == 'captcha_status')
-			pause = false;
 
 		om(message);
 	}
@@ -195,6 +214,7 @@
 				image_correct_flag = true;
 				console.log(title + " охуенен");
 			}
+			def = 60000;
 			return -1;
 		}
 
@@ -250,12 +270,12 @@
 
 	function draw() {
 		if (0 < App.cooldown-Date.now() || pause)
-			setTimeout(draw, timer_1);
+			setTimeout(draw, timer);
 		else {
 			for (var i = 0; i < painters.length; i++) {
 				if (painters[i].isReady()) {
 					if (painters[i].drawImage() > 0) {
-						setTimeout(draw, timer_2);
+						setTimeout(draw, cooldown);
 						return;
 					}
 					else
@@ -264,7 +284,7 @@
 				else
 					continue;
 			}
-			setTimeout(draw, 15000);
+			setTimeout(draw, def);
 		}
 		return;
 	}
